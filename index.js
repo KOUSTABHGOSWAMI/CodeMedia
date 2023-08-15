@@ -12,12 +12,24 @@ app.use(expressLayouts);
 //including the express layout 
 const db = require('./config/mongoose');
 
+
+//used for session cookie
+const session = require('express-session');
+const passport = require('passport');
+const passportLocal = require('./config/passport-local-strategy');
+const { default: mongoose } = require('mongoose');
+
+const MongoStore = require('connect-mongo'); //this accepts an argument called session as session data is getting stored
+
+
 //reading through post request we need
 app.use(express.urlencoded());
-app.use(cookieParser());
+
+app.use(cookieParser()); //used for handling and setting cookies
+
 app.use(express.static('./assets')); //including the assets folder where the files can be accessed
 
-app.use('/', require('./routes'));
+
 
 //setting up views
 app.set('view engine', 'ejs');
@@ -28,6 +40,32 @@ app.set('layout extractStyles', true);
 app.set('layout extractScripts', true);
 
 
+//mongo store is used to store the session cookie in the DB
+app.use(session({
+    name: 'codeial',
+    //To do, change the secret before deployment in production mode
+    secret: "blahsomething",
+    saveUninitialized: false,
+    resave: false,
+    cookie: {
+        maxAge: (1000 * 60 * 100)
+    },
+    store: MongoStore.create({
+            mongoUrl: 'mongodb://127.0.0.1:27017/codeial_development',
+            autoRemove: 'disabled'
+        },
+
+        function(err) {
+            console.log(err, 'connect-mongodb setup ok');
+        }
+
+    )
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(passport.setAuthenticatedUser); // checking if user is authenticated and setting the user information in the locals
+app.use('/', require('./routes'));
 app.listen(port, function(err) {
     if (err) {
         // console.log('Error listening to port')
