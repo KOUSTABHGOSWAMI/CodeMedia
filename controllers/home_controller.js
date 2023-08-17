@@ -1,7 +1,7 @@
 module.exports.home = function(req, res) {
-    console.log(req.cookies); //  set the cookie in the browser and it prints the pair in the console
+    // console.log(req.cookies); //  set the cookie in the browser and it prints the pair in the console
     //we change the cookie in the response
-    res.cookie('user_id', 25);
+    // res.cookie('user_id', 25);
 
     // console.log(req.cookies);
 

@@ -11,7 +11,7 @@ const expressLayouts = require('express-ejs-layouts');
 app.use(expressLayouts);
 //including the express layout 
 const db = require('./config/mongoose');
-
+// const sassMiddlewire = require('node-sass-middleware');
 
 //used for session cookie
 const session = require('express-session');
@@ -20,6 +20,17 @@ const passportLocal = require('./config/passport-local-strategy');
 const { default: mongoose } = require('mongoose');
 
 const MongoStore = require('connect-mongo'); //this accepts an argument called session as session data is getting stored
+
+//const sassMiddlewire = require('node-')
+
+
+// app.use(sassMiddlewire({
+//     src: './assets/scss',
+//     dest: './assets/css',
+//     debug: true, // if we want to display message when it's unable to convert to css file
+//     outputStyle: 'extended',
+//     prefix: '/css' //where should my server look out for css file
+// }));
 
 
 //reading through post request we need
