@@ -1,4 +1,5 @@
 const Post = require('../models/post');
+const User = require('../models/user');
 module.exports.home = async function(req, res) {
     // console.log(req.cookies); //  set the cookie in the browser and it prints the pair in the console
     //we change the cookie in the response
@@ -10,10 +11,18 @@ module.exports.home = async function(req, res) {
 
     //populate the user for each post
     try {
-        const posts = await Post.find({}).populate('user');
+        const posts = await Post.find({}).populate('user').populate({
+            path: 'comments',
+            populate: {
+                path: 'user'
+            }
+        });
+
+        const users = await User.find({});
         return res.render('home', {
             title: "Codeial | Home",
-            posts: posts
+            posts: posts,
+            all_users: users
         });
     } catch (err) {
         console.log('error in finding posts', err);

@@ -1,10 +1,20 @@
 const User = require('../models/user');
 
-module.exports.profile = function(req, res) {
+module.exports.profile = async function(req, res) {
         // res.end('<h1> User Profile</h1>');
-        return res.render('user_profile', {
-            title: "Profile"
-        });
+        try {
+            const user = await User.findById(req.params.id);
+
+            return res.render('user_profile', {
+                title: "User Profile",
+                profile_user: user
+
+            });
+        } catch (err) {
+            console.log('error in redirecting profile page', err);
+            return;
+        }
+
     }
     //render the sign up page
 module.exports.signup = function(req, res) {

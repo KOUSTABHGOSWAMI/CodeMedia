@@ -38,7 +38,7 @@ module.exports.create = async function(req, res) {
             user: req.user._id
         });
 
-        console.log(comment);
+        // console.log(comment);
 
         post.comments.push(comment);
         await post.save(); // Make sure to await the save operation
@@ -49,3 +49,28 @@ module.exports.create = async function(req, res) {
         return res.redirect('/');
     }
 };
+
+module.exports.destroy = async function(req, res) {
+    try {
+        const comment = await Comment.findById(req.params.id);
+        if (comment.user == req.user.id) {
+            //storing the post id to where this comment belongs to so that we can remove this comment from the post
+            const postId = comment.post;
+            await Comment.deleteOne({ _id: comment._id });
+            try {
+                //pulling out that comment from the Post 
+                const post = await Post.findByIdAndUpdate(postId, { $pull: { comments: req.params.id } });
+                return res.redirect('back');
+
+            } catch (err) {
+                console.log('error in updating comment in post', err);
+                return res.redirect('back');
+            }
+
+        } else
+            return res.redirect('back');
+    } catch (err) {
+        console.log('error in destroying comment', err);
+        return res.redirect('back');
+    }
+}
